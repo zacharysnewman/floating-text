@@ -1,0 +1,20 @@
+{
+  "name": "com.zacharysnewman.floating-text",
+  "version": "1.0.0",
+  "displayName": "Floating Text",
+  "description": "Floating text effects for damage numbers, XP, resources, and more. Uses TextMeshPro and ScriptableObject-driven configuration.",
+  "unity": "2020.3",
+  "dependencies": {
+    "com.unity.textmeshpro": "3.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "Example Usage",
+      "description": "Example scene demonstrating floating damage, XP, and resource text.",
+      "path": "Samples~/ExampleUsage"
+    }
+  ],
+  "author": {
+    "name": "Zachary Newman"
+  }
+}
