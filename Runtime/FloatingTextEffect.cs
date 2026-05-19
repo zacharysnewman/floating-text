@@ -4,11 +4,12 @@ using TMPro;
 
 public class FloatingTextEffect : MonoBehaviour
 {
-    public Transform target; // The target object to follow
-    public Vector3 offset; // Offset from the target object
-    public float floatDistance = 5f; // Distance to move upwards
-    public float duration = 2f; // Duration of the animation
-    public bool destroyOnComplete = true;
+    public Transform target;
+    public Vector3 offset;
+    public float floatDistance = 5f;
+    public float duration = 2f;
+    public AnimationType animationType = AnimationType.Linear;
+    public Camera overrideCamera;
 
     private RectTransform rectTransform;
     private TMP_Text tmpText;
@@ -18,18 +19,8 @@ public class FloatingTextEffect : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         tmpText = GetComponent<TMP_Text>();
-        mainCamera = Camera.main;
-
-        Vector3 startingPosition = transform.position;
-        Vector3 startingScreenPosition = mainCamera.WorldToScreenPoint(startingPosition);
-        Color startColor = tmpText.color;
-
-        while (true)
-        {
-            rectTransform.position = startingScreenPosition;
-            tmpText.color = startColor;
-            yield return FloatingTextAnimation();
-        }
+        mainCamera = overrideCamera != null ? overrideCamera : Camera.main;
+        yield return FloatingTextAnimation();
     }
 
     IEnumerator FloatingTextAnimation()
@@ -45,18 +36,26 @@ public class FloatingTextEffect : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / duration);
+            float easedT = ApplyEasing(t);
 
-            Vector3 currentWorldPosition = Vector3.Lerp(startWorldPosition, endWorldPosition, t);
-            Vector3 screenPosition = mainCamera.WorldToScreenPoint(currentWorldPosition);
-            rectTransform.position = screenPosition;
-            tmpText.color = Color.Lerp(startColor, endColor, t);
+            Vector3 currentWorldPosition = Vector3.Lerp(startWorldPosition, endWorldPosition, easedT);
+            rectTransform.position = mainCamera.WorldToScreenPoint(currentWorldPosition);
+            tmpText.color = Color.Lerp(startColor, endColor, easedT);
 
             yield return new WaitForEndOfFrame();
         }
 
-        if (destroyOnComplete)
+        Destroy(gameObject);
+    }
+
+    float ApplyEasing(float t)
+    {
+        return animationType switch
         {
-            Destroy(gameObject);
-        }
+            AnimationType.EaseIn => t * t,
+            AnimationType.EaseOut => t * (2 - t),
+            AnimationType.EaseInOut => t < 0.5f ? 2 * t * t : -1 + (4 - 2 * t) * t,
+            _ => t,
+        };
     }
 }

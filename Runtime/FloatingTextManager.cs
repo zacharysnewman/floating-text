@@ -3,25 +3,32 @@ using TMPro;
 
 public class FloatingTextManager : MonoBehaviour
 {
-    public Canvas targetCanvas; // The canvas to parent the floating text under
+    public Canvas targetCanvas;
 
-    // Method to create a floating text
-    public void CreateFloatingText(Transform target, string text, FloatingTextData floatingTextData)//, Vector3 offset, float floatDistance, float duration)
+    public void CreateFloatingText(Transform target, string text, FloatingTextData data)
     {
-        // Instantiate the floating text prefab
-        GameObject floatingTextInstance = Instantiate(floatingTextData.textPrefab, targetCanvas.transform);
+        if (data == null) { Debug.LogError("[FloatingTextManager] data is null."); return; }
+        if (data.textPrefab == null) { Debug.LogError("[FloatingTextManager] data.textPrefab is null."); return; }
+        if (targetCanvas == null) { Debug.LogError("[FloatingTextManager] targetCanvas is not assigned."); return; }
 
-        // Get the FloatingTextEffect component
-        FloatingTextEffect floatingTextEffect = floatingTextInstance.GetComponent<FloatingTextEffect>();
+        GameObject instance = Instantiate(data.textPrefab, targetCanvas.transform);
 
-        // Assign the target, offset, float distance, and duration
-        floatingTextEffect.target = target;
-        // floatingTextEffect.offset = offset;
-        // floatingTextEffect.floatDistance = floatDistance;
-        // floatingTextEffect.duration = duration;
+        FloatingTextEffect effect = instance.GetComponent<FloatingTextEffect>();
+        if (effect == null)
+        {
+            Debug.LogError("[FloatingTextManager] textPrefab is missing a FloatingTextEffect component.");
+            Destroy(instance);
+            return;
+        }
 
-        // Set the text of the TMP_Text component
-        TMP_Text tmpText = floatingTextInstance.GetComponent<TMP_Text>();
-        tmpText.text = $"{floatingTextData.prefix}{text}{floatingTextData.suffix}";
+        effect.target = target;
+        effect.offset = data.offset;
+        effect.floatDistance = data.floatDistance;
+        effect.duration = data.duration;
+        effect.animationType = data.animationType;
+
+        TMP_Text tmpText = instance.GetComponent<TMP_Text>();
+        if (tmpText != null)
+            tmpText.text = $"{data.prefix}{text}{data.suffix}";
     }
 }

@@ -91,7 +91,6 @@ rectTransform.position = startingScreenPosition;
 | Medium | `FloatingTextEffect.cs:21` | Hard-coded `Camera.main` lookup runs every time an instance starts. This is a tagged-object search and is slow in scenes with many instances or multiple cameras. |
 | Low | `package.json:8` | TextMeshPro pinned to exact version `3.0.0`. Stricter than necessary; may cause conflicts in projects already using a newer TMP version. |
 | Low | All files | No XML doc comments, no README. There is no documentation for integrators beyond the sample scene. |
-| Low | — | No tests of any kind (unit, integration, or otherwise). |
 
 ---
 
@@ -136,7 +135,6 @@ rectTransform.position = startingScreenPosition;
 | Public API | Incomplete (parameters commented out) |
 | Configuration pattern | Good |
 | Documentation | Missing |
-| Tests | None |
 | CI/CD | Good |
 | Dependency hygiene | Minor issue (exact version pin) |
 
